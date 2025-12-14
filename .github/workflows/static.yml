@@ -1,4 +1,4 @@
-name: Deploy Single HTML File
+name: Deploy Single HTML App to GitHub Pages
 
 on:
   push:
@@ -16,31 +16,27 @@ concurrency:
 
 jobs:
   deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Inject API Keys
-        # This step replaces the placeholders in index.html with the real keys from GitHub Secrets
+      - name: Inject API Keys into HTML
         run: |
-          sed -i "s/__GH_SECRET_KEY_1__/${{ secrets.VITE_API_KEY }}/g" index.html
-          sed -i "s/__GH_SECRET_KEY_2__/${{ secrets.VITE_API_KEY_2 }}/g" index.html
-          sed -i "s/__GH_SECRET_KEY_3__/${{ secrets.VITE_API_KEY_3 }}/g" index.html
-          sed -i "s/__GH_SECRET_KEY_4__/${{ secrets.VITE_API_KEY_4 }}/g" index.html
-          sed -i "s/__GH_SECRET_KEY_5__/${{ secrets.VITE_API_KEY_5 }}/g" index.html
+          sed -i "s/GH_SECRET_KEY_1/${{ secrets.GH_SECRET_KEY_1 }}/g" index.html
+          sed -i "s/GH_SECRET_KEY_2/${{ secrets.GH_SECRET_KEY_2 }}/g" index.html
+          sed -i "s/GH_SECRET_KEY_3/${{ secrets.GH_SECRET_KEY_3 }}/g" index.html
+          sed -i "s/GH_SECRET_KEY_4/${{ secrets.GH_SECRET_KEY_4 }}/g" index.html
+          sed -i "s/GH_SECRET_KEY_5/${{ secrets.GH_SECRET_KEY_5 }}/g" index.html
 
-      - name: Setup Pages
+      - name: Setup GitHub Pages
         uses: actions/configure-pages@v5
 
-      - name: Upload artifact
+      - name: Upload website files
         uses: actions/upload-pages-artifact@v3
         with:
-          path: '.'
+          path: .
 
       - name: Deploy to GitHub Pages
-        id: deployment
         uses: actions/deploy-pages@v4
